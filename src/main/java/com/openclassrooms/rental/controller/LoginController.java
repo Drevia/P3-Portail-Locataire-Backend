@@ -1,5 +1,7 @@
 package com.openclassrooms.rental.controller;
 
+import java.security.Principal;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,7 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.openclassrooms.rental.entity.JwtResponse;
 import com.openclassrooms.rental.entity.LoginRequest;
 import com.openclassrooms.rental.entity.RegisterRequest;
-import com.openclassrooms.rental.entity.User;
+import com.openclassrooms.rental.entity.RentalUser;
+import com.openclassrooms.rental.mapper.RentalUserMapper;
 import com.openclassrooms.rental.service.JWTService;
 
 import com.openclassrooms.rental.repository.UserRepository;
@@ -19,6 +22,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
 
 
 @RestController
@@ -38,7 +42,7 @@ public class LoginController {
             new UsernamePasswordAuthenticationToken(entity.email(), entity.password())
         );
 
-        String jwt = jwtService.generateToken(entity.email()); //appeler le service
+        String jwt = jwtService.generateToken(entity.email());
         
 
         return ResponseEntity.ok(new JwtResponse(jwt));
@@ -46,24 +50,40 @@ public class LoginController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
-        // Vérifier si l'email existe déjà
+        // Check if the email already exists
         if (userRepository.findByEmail(request.email()).isPresent()) {
-            return ResponseEntity.badRequest().body("Email déjà utilisé");
+            return ResponseEntity.badRequest().body("Email already in use");
         }
 
-        // Encoder le mot de passe
+        // Encode the password
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String encodedPassword = encoder.encode(request.password());
 
-        // Créer et sauvegarder l'utilisateur
-        User user = new User();
+        // Create and save the user
+        RentalUser user = new RentalUser();
         user.setEmail(request.email());
         user.setName(request.name());
         user.setPassword(encodedPassword);
         userRepository.save(user);
 
-        return ResponseEntity.ok("Utilisateur créé avec succès");
+        String jwt = jwtService.generateToken(request.email());
+
+        return ResponseEntity.ok(new JwtResponse(jwt));
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getUserInfo(Principal principal) {
+        // Récupérer l'utilisateur depuis le contexte d'authentification
+        Authentication authentication = (org.springframework.security.core.Authentication) principal;
+        Object principalObj = authentication.getPrincipal();
+        if (principalObj instanceof RentalUser) {
+            RentalUser user = (RentalUser) principalObj;
+            return ResponseEntity.ok(RentalUserMapper.toDto(user));
+        }
+        // Si ce n'est pas un User, renvoyer l'email seulement
+        return ResponseEntity.ok(new JwtResponse(principal.getName()));
+    }
+    
     
     
 }

@@ -4,9 +4,9 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.openclassrooms.rental.entity.User;
+import com.openclassrooms.rental.entity.RentalUser;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<RentalUser, Long> {
     
-    Optional<User> findByEmail(String email);
+    Optional<RentalUser> findByEmail(String email);
 }
