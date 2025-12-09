@@ -1,6 +1,7 @@
 package com.openclassrooms.rental.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,9 +38,10 @@ public class RentalController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<RentalDTO>> getAllRentals() {
+    public ResponseEntity<Map<String, List<RentalDTO>>> getAllRentals() {
         log.info("Fetching all rentals");
-        return ResponseEntity.ok(rentalService.getAllRentals());
+        List<RentalDTO> rentals = rentalService.getAllRentals();
+        return ResponseEntity.ok(Map.of("rentals", rentals));
     }
 
     @PostMapping(consumes = {"multipart/form-data"})

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.openclassrooms.rental.entity.DTO.RentalDTO;
 import com.openclassrooms.rental.mapper.RentalMapper;
@@ -28,7 +29,7 @@ public class RentalService {
                 .toList();
         return rentals;
     }
-    public RentalDTO createRental(String name, Double surface, Double price, String description, org.springframework.web.multipart.MultipartFile image, Long ownerId) {
+    public RentalDTO createRental(String name, Double surface, Double price, String description, MultipartFile image, Long ownerId) {
         Rental rental = new Rental();
         rental.setName(name);
         rental.setSurface(surface);
@@ -40,7 +41,7 @@ public class RentalService {
         try {
             String originalFilename = image.getOriginalFilename();
             String fileName = System.currentTimeMillis() + "_" + originalFilename;
-            java.nio.file.Path uploadPath = java.nio.file.Paths.get("src/main/resources/static/" + fileName);
+            java.nio.file.Path uploadPath = java.nio.file.Paths.get("src/main/resources/static/images" + fileName);
             java.nio.file.Files.write(uploadPath, image.getBytes());
             rental.setPicture(fileName);
         } catch (Exception e) {
