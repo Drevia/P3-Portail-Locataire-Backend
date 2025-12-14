@@ -28,6 +28,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JWTService service;
     private final CustomUserDetailService customUserDetailService;
 
+    /**
+     * <p>Filter to authenticate requests using JWT tokens.</p>
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {

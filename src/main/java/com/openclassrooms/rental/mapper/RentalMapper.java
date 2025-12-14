@@ -3,7 +3,10 @@ package com.openclassrooms.rental.mapper;
 import com.openclassrooms.rental.entity.Rental;
 import com.openclassrooms.rental.entity.DTO.RentalDTO;
 
+// Mapper class for Rental entity and RentalDTO
 public class RentalMapper {
+
+
     public static RentalDTO toDto(Rental rental) {
         if (rental == null) return null;
         return new RentalDTO(

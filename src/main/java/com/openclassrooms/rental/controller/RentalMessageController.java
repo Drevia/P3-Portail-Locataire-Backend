@@ -19,6 +19,11 @@ public class RentalMessageController {
 
     private final RentalMessageService rentalMessageService;
 
+    /**
+     * <p>Create a new rental message.</p>
+     * @param dto The DTO containing message details.
+     * @return A ResponseEntity containing the created RentalMessage.
+     */
     @PostMapping()
     public ResponseEntity<?> createMessage(@RequestBody RentalMessageCreateDTO dto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

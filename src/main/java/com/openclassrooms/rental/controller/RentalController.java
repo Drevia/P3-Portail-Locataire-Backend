@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.openclassrooms.rental.service.RentalService;
 
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -31,12 +33,30 @@ public class RentalController {
 
     private final RentalService rentalService;
     
+    /**
+     * <p>Get a rental by its ID.</p>
+     * @param id The ID of the rental to retrieve.
+     * @return A ResponseEntity containing the RentalDTO if found, or null if not found
+     */
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Rental found"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized"),
+    })
     @GetMapping("/{id}")
     public ResponseEntity<RentalDTO> getRentalById(@PathVariable String id) {
         
         return ResponseEntity.ok(rentalService.getRentalById(Long.parseLong(id)));
     }
 
+
+    /**
+     * <p>Get all rentals.</p>
+     * @return A ResponseEntity containing a map with a list of RentalDTOs.
+     */
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Rentals found"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized"),
+    })
     @GetMapping()
     public ResponseEntity<Map<String, List<RentalDTO>>> getAllRentals() {
         log.info("Fetching all rentals");
@@ -44,6 +64,19 @@ public class RentalController {
         return ResponseEntity.ok(Map.of("rentals", rentals));
     }
 
+    /**
+     * <p>Create a new rental.</p>
+     * @param name The name of the rental.
+     * @param surface The surface area of the rental.
+     * @param price The price of the rental.
+     * @param description The description of the rental.
+     * @param picture The picture file of the rental.
+     * @return A ResponseEntity containing the created RentalDTO.
+     */
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Rental created"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized"),
+    })
     @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<RentalDTO> createRentals(
         @RequestParam("name") String name,
@@ -63,6 +96,19 @@ public class RentalController {
         }
     }
 
+    /**
+     * <p>Update an existing rental.</p>
+     * @param id The ID of the rental to update.
+     * @param name The new name of the rental.
+     * @param surface The new surface area of the rental.
+     * @param price The new price of the rental.
+     * @param description The new description of the rental.
+     * @return A ResponseEntity containing the updated RentalDTO.
+     */
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Rental updated"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized"),
+    })
     @PutMapping("/id")
     public ResponseEntity<RentalDTO> updateRentals(
         @PathVariable String id,

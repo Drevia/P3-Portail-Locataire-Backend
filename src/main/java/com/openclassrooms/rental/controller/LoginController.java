@@ -35,6 +35,11 @@ public class LoginController {
 
     private final UserRepository userRepository;
 
+    /**
+     * <p>Authenticate a user and generate a JWT token.</p>
+     * @param entity The login request containing email and password.
+     * @return A ResponseEntity containing the JWT token.
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest entity) {
         
@@ -48,6 +53,11 @@ public class LoginController {
         return ResponseEntity.ok(new JwtResponse(jwt));
     }
 
+    /**
+     * <p>Register a new user.</p>
+     * @param request The registration request containing user details.
+     * @return A ResponseEntity containing the JWT token.
+     */
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         // Check if the email already exists
@@ -71,6 +81,11 @@ public class LoginController {
         return ResponseEntity.ok(new JwtResponse(jwt));
     }
 
+    /**
+     * <p>Get information about the currently authenticated user.</p>
+     * @param principal The security principal representing the authenticated user.
+     * @return A ResponseEntity containing the user information.
+     */
     @GetMapping("/me")
     public ResponseEntity<?> getUserInfo(Principal principal) {
         // Récupérer l'utilisateur depuis le contexte d'authentification
@@ -80,7 +95,6 @@ public class LoginController {
             RentalUser user = (RentalUser) principalObj;
             return ResponseEntity.ok(RentalUserMapper.toDto(user));
         }
-        // Si ce n'est pas un User, renvoyer l'email seulement
         return ResponseEntity.ok(new JwtResponse(principal.getName()));
     }
     
