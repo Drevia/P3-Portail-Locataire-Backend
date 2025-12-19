@@ -10,6 +10,8 @@ With a Mysql database, you can use the file called "script.sql" on the front pro
 mysql -u root -p ma_base < schema.sql
 Or symply by putting all the sql query in a new query in MySQL Workbench
 
+don't forget to put the database password in a new .env.properties files you will create in the project
+
 ## Go to the swagger:
 
 If you want to use the swagger, it's available on the following url:
