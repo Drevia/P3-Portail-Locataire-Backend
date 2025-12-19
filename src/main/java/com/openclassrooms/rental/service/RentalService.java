@@ -1,5 +1,8 @@
 package com.openclassrooms.rental.service;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,8 +30,11 @@ public class RentalService {
         List<RentalDTO> rentals = rentalRepository.findAll().stream()
                 .map(RentalMapper::toDto)
                 .toList();
+
+
         return rentals;
     }
+
     public RentalDTO createRental(String name, Double surface, Double price, String description, MultipartFile image, Long ownerId) {
         Rental rental = new Rental();
         rental.setName(name);
@@ -41,8 +47,8 @@ public class RentalService {
         try {
             String originalFilename = image.getOriginalFilename();
             String fileName = System.currentTimeMillis() + "_" + originalFilename;
-            java.nio.file.Path uploadPath = java.nio.file.Paths.get("src/main/resources/static/images" + fileName);
-            java.nio.file.Files.write(uploadPath, image.getBytes());
+            Path uploadPath = Paths.get("src/main/resources/static/images/" + fileName);
+            Files.write(uploadPath, image.getBytes());
             rental.setPicture(fileName);
         } catch (Exception e) {
             rental.setPicture(null);

@@ -15,7 +15,7 @@ import com.openclassrooms.rental.entity.RegisterRequest;
 import com.openclassrooms.rental.entity.RentalUser;
 import com.openclassrooms.rental.mapper.RentalUserMapper;
 import com.openclassrooms.rental.service.JWTService;
-
+import com.openclassrooms.rental.service.LoginService;
 import com.openclassrooms.rental.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -34,6 +34,7 @@ public class LoginController {
     private final AuthenticationManager authenticationManager;
 
     private final UserRepository userRepository;
+    private final LoginService loginService;
 
     /**
      * <p>Authenticate a user and generate a JWT token.</p>
@@ -42,14 +43,9 @@ public class LoginController {
      */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest entity) {
-        
-        Authentication auth = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(entity.email(), entity.password())
-        );
 
-        String jwt = jwtService.generateToken(entity.email());
-        
-
+        String jwt = loginService.login(entity);
+    
         return ResponseEntity.ok(new JwtResponse(jwt));
     }
 
@@ -61,24 +57,11 @@ public class LoginController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         // Check if the email already exists
-        if (userRepository.findByEmail(request.email()).isPresent()) {
+        if (loginService.emailExists(request.email())) {
             return ResponseEntity.badRequest().body("Email already in use");
         }
 
-        // Encode the password
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        String encodedPassword = encoder.encode(request.password());
-
-        // Create and save the user
-        RentalUser user = new RentalUser();
-        user.setEmail(request.email());
-        user.setName(request.name());
-        user.setPassword(encodedPassword);
-        userRepository.save(user);
-
-        String jwt = jwtService.generateToken(request.email());
-
-        return ResponseEntity.ok(new JwtResponse(jwt));
+        return ResponseEntity.ok(new JwtResponse(loginService.createUser(request)));
     }
 
     /**

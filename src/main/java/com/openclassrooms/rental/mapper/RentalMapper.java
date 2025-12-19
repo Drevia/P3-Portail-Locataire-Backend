@@ -1,5 +1,7 @@
 package com.openclassrooms.rental.mapper;
 
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 import com.openclassrooms.rental.entity.Rental;
 import com.openclassrooms.rental.entity.DTO.RentalDTO;
 
@@ -14,12 +16,22 @@ public class RentalMapper {
             rental.getName(),
             rental.getSurface(),
             rental.getPrice(),
-            rental.getPicture(),
+            buildImageUrl(rental.getPicture()),
             rental.getDescription(),
             rental.getOwnerId() != null ? rental.getOwnerId() : null,
             rental.getCreatedAt(),
             rental.getUpdatedAt()
         );
+    }
+
+    public static String buildImageUrl(String fileName) {
+        if (fileName == null) return null;
+
+        return ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path("/images/")
+                .path(fileName)
+                .toUriString();
     }
 
 }

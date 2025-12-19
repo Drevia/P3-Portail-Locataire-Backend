@@ -28,12 +28,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JWTService service;
     private final CustomUserDetailService customUserDetailService;
 
+    
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getServletPath();
+    return path.startsWith("/swagger-ui")
+        || path.startsWith("/v3/api-docs")
+        || path.startsWith("/images");
+    }
+
+
     /**
      * <p>Filter to authenticate requests using JWT tokens.</p>
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String userName;
